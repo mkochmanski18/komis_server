@@ -40,10 +40,14 @@ export class AuthService {
         try {
             const user = await User.findOneBy({
                 email: req.email,
-                pwdHash: hashPwd(req.password),
             });
-
             if (!user) {
+                throw new HttpException('Invalid Credentials', HttpStatus.FORBIDDEN);
+            }
+
+            const hashPass = hashPwd(user.salt+req.password);
+
+            if (user.pwdHash !== hashPass) {
                 throw new HttpException('Invalid Credentials', HttpStatus.FORBIDDEN);
             }
             const userData = {

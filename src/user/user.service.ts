@@ -29,13 +29,19 @@ export class UserService {
               throw new HttpException('User name is taken!', HttpStatus.CONFLICT);
             }
             else{
+                const {
+                  randomBytes,
+                } = require('node:crypto');
+                const saltbuf = randomBytes(32).toString('hex');
+
                 const user = new User();
                 user.email = newUser.email;
                 user.name = newUser.name;
                 user.firstname = newUser.firstname;
                 user.lastname = newUser.lastname;
                 user.gender = newUser.gender;
-                user.pwdHash = hashPwd(newUser.pwd);
+                user.salt = saltbuf;
+                user.pwdHash = hashPwd(saltbuf+newUser.pwd);
                 
                 await user.save();
                 const token = new Token();

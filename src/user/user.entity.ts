@@ -34,6 +34,11 @@ export class User extends BaseEntity{
     })
     email: string;
 
+    @Column({
+        default: null,
+    })
+    salt: string;
+
     @Column()
     pwdHash: string;
 
