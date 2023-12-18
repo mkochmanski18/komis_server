@@ -13,7 +13,17 @@ export class UserService {
         const {id, name, gender, email} = user;
         return {id,name,email};
     }
-    
+    nodemailer = require("nodemailer");
+    mailTransport  = this.nodemailer.createTransport({
+               pool: true,
+               host: "mail2.small.pl",
+               port: 25,
+               auth: {
+                   user: 'admin@mkochmanski.smallhost.pl',
+                   pass: '8^&#.;nt@@dR%N9'
+               }
+               });
+
     async register(newUser:RegisterDto):Promise<RegisterUserResponse|any>{
             try{
             const checkemail = await User.findOne({
@@ -48,6 +58,14 @@ export class UserService {
                 token.user= user;
                 token.save();
                 console.log("Registered!");
+
+                const result = await this.mailTransport.sendMail({
+                  from:    '"SYSTEM" <admin@mkochmanski.smallhost.pl>',
+                  to:      user.email,
+                  subject: 'Account Activation',
+                  text:    'Dziękujemy za rejestrację! W celu aktywacji przejdź na adres: http://mkochmanski.smallhost.pl:37738/user/activateAccount/'+user.id+'.Wiadomość została wygenerowana automatycznie. Proszę nie udzielać na nią odpowiedzi.',
+                  html:    "<div style='text-align:center'><h4>Dziękujemy za rejestrację!</h4><p>W celu aktywacji kliknij w link poniżej:</p><a href='http://mkochmanski.smallhost.pl:37738/user/activateAccount/"+user.id+"'>Aktywuj konto</a><p>Wiadomość została wygenerowana automatycznie. Proszę nie udzielać na nią odpowiedzi</p></div>",
+                })
                 
                 return this.regFilter(user);
             }
