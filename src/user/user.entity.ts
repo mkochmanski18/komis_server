@@ -1,7 +1,9 @@
-import { BaseEntity, Column, Entity,JoinColumn,OneToOne,PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity,JoinColumn,ManyToOne,OneToMany,OneToOne,PrimaryGeneratedColumn } from "typeorm";
 import { Token } from "./token.entity";
 import { Role } from "src/enums/role.enum";
 import { Gender } from "src/enums/gender.enum";
+import { Car } from "src/car/car.entity";
+import { Reservation } from "src/car/reservation.entity";
 
 
 @Entity()
@@ -55,11 +57,11 @@ export class User extends BaseEntity{
 
 
     @OneToOne(()=>Token, (token)=>token.id)
-    currentTokenId: Token
+    currentTokenId: Token;
 
-    // @Column({
-    //     nullable:true,
-    //     default: null,
-    // })
-    // currentTokenId:string;
-}
+    @OneToMany(()=>Car, (car)=>car.createdBy)
+    createdCars: Car[]
+    
+    @OneToMany(()=>Car, (car)=>car.modifiedBy)
+    modyfiedCars: Car[]
+
