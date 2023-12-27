@@ -8,6 +8,15 @@ import { ReservationDto } from './dto/reservation.dto';
 
 @Injectable()
 export class CarService {
+    async fetchRentalCars(): Promise<Car[]> {
+        const cars = await Car.find({relations:{reservation:true}});
+        let newArray:Car[] = [];
+        cars.forEach(car=>{
+            if(car.reservation === null) newArray.push(car);
+        })
+        console.log(newArray)
+        return newArray;
+    }
     
     async fetchOneCar(carId: string): Promise<Car> {
             const car = await Car.findOneBy({id:carId});
@@ -43,6 +52,22 @@ export class CarService {
             return newCar.id;       
     }
 
+    async makeReservation(req: any,resBody:ReservationDto): Promise<string> {
+        
+        const car = await Car.findOne({where:{id:resBody.carId},relations:{reservation:true}});
+        if(!car) throw new HttpException('Car does not exist.', HttpStatus.NOT_FOUND)
+        if(car.reservation) throw new HttpException('Car is already reserved by someone.', HttpStatus.CONFLICT)
+        const newReservation = new Reservation();
+        newReservation.reservedBy = req.user;
+        newReservation.reservationDate = new Date();
+        newReservation.reservedCar = car;
+        newReservation.monthlyCost = resBody.monthlyCost;
+        newReservation.reservationBeginDate = resBody.reservationBeginDate;
+        newReservation.reservationEndDate = resBody.reservationEndDate;
+        newReservation.save();
+        return "reserved";    
+    }
+    
     async updateCar(carBody:UpdateCarDto|UpdateCarDto[]):Promise<string>{
         if(Array.isArray(carBody)){
             carBody.forEach(async object=>{

@@ -35,6 +35,16 @@ export class CarController {
          return this.carService.fetchAll();
      }
 
+     @Get('car/rent')
+     @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+     @ApiOperation({ summary: 'Get all cars posible to rent.' })
+     @ApiOkResponse({ description: 'Objects fetched.'})
+     @ApiInternalServerErrorResponse({ description: 'Server error.'})
+     fetchByCreator(
+     ):Promise<Car[]>{
+         return this.carService.fetchRentalCars();
+     }
+
      @Get('car/:carId')
      @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
      @ApiOperation({ summary: 'Get car with certain id.' })
@@ -58,6 +68,21 @@ export class CarController {
         @Req() req:any,
     ):Promise<string>{
         return this.carService.newCar(carBody,req);
+    }
+
+    @Post('reservation')
+    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+    @ApiOperation({ summary: 'Add new car to system.' })
+    @ApiCreatedResponse({ description: 'Object added.'})
+    @ApiConflictResponse({ description: 'Car is already reserved.'})
+    @ApiNotFoundResponse({ description: 'User does not exist.'})
+    @ApiInternalServerErrorResponse({ description: 'Server error.'})
+    makeReservation(
+        @Req() req:any,
+        @Body() resBody: ReservationDto,
+    ):Promise<string>{
+        return this.carService.makeReservation(req,resBody);
     }
 
     @Put('car')
