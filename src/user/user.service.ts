@@ -2,17 +2,21 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { hashPwd } from 'src/utils/hash-pwd';
 import { User } from './user.entity';
 import { RegisterDto } from './dto/register.dto';
-import { RegisterUserResponse } from 'src/interfaces/user';
+import { RegisterUserResponse, StandardUserInterface } from 'src/interfaces/user';
 import { Token } from './token.entity';
 
 @Injectable()
 export class UserService {
-   
-
+    
     regFilter(user:User):RegisterUserResponse{
         const {id, name, gender, email} = user;
         return {id,name,email};
     }
+    standardUserFilter(user:User):StandardUserInterface{
+      const {id, name, gender, email, firstname, lastname} = user;
+      return {id,name,firstname, lastname, gender, email};
+  }
+    
     nodemailer = require("nodemailer");
     mailTransport  = this.nodemailer.createTransport({
                pool: true,
@@ -25,7 +29,7 @@ export class UserService {
                });
 
     async register(newUser:RegisterDto):Promise<RegisterUserResponse|any>{
-            try{
+           
             const checkemail = await User.findOne({
               where:{email:newUser.email}
             });
@@ -69,22 +73,29 @@ export class UserService {
                 
                 return this.regFilter(user);
             }
-          }
-          catch{throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR)}
+         
         }
 
-        async getAll(): Promise<[User[],number]> {
-          try{
-            const users = await User.findAndCount({});
-            return users;
-          }
-          catch{
-            throw new HttpException('Server error', HttpStatus.INTERNAL_SERVER_ERROR)
-          }
+        async getAll(): Promise<StandardUserInterface[]> {
+         
+            const users = await User.find({});
+            let newUserArray:StandardUserInterface[] = [];
+            users.forEach(user=>{
+              newUserArray.push(this.standardUserFilter(user))
+            })
+            return newUserArray;
+          
       }
 
-      async activateAccount(id:string):Promise<any>{
+      async getOne(userId:string): Promise<StandardUserInterface> {
         
+          const user = await User.findOne({where:{id:userId}});
+          if(!user)throw new HttpException('User not found!', HttpStatus.NOT_FOUND);
+          return this.standardUserFilter(user);
+        
+    }
+   
+      async activateAccount(id:string):Promise<any>{
         
           const user = await User.findOneBy({id,activated:false});
           if(!user){

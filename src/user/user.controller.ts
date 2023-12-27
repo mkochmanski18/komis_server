@@ -1,19 +1,15 @@
-import { Body, Controller, Get, Inject, Param, Post,Query,Req,UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post,UseGuards } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { UserService } from './user.service';
-import { RegisterUserResponse } from 'src/interfaces/user';
+import { RegisterUserResponse, StandardUserInterface } from 'src/interfaces/user';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import {
-    ApiBody,
     ApiConflictResponse,
-    ApiConsumes,
     ApiCreatedResponse,
-    ApiForbiddenResponse,
     ApiInternalServerErrorResponse,
     ApiOkResponse,
     ApiUnauthorizedResponse,
     ApiOperation,
-    ApiResponse,
     ApiTags,
     ApiNotFoundResponse,
   } from '@nestjs/swagger';
@@ -22,7 +18,7 @@ import { LocalisationGuard } from 'src/utils/localisation.guard';
 import { ActivationGuard } from 'src/utils/activation.guard';
 
 @ApiTags('user')
-@Controller('user')
+@Controller()
 export class UserController {
     constructor(
         @Inject(UserService) private userService: UserService,
@@ -40,18 +36,31 @@ export class UserController {
     }
 
     //Wszyscy użytkownicy
-    @Get('/all')
+    @Get('user/all')
     @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
     @ApiOperation({ summary: 'Get all existing users.' })
     @ApiOkResponse({ description: 'Users have been successfully fetched.'})
     @ApiUnauthorizedResponse({ description: 'Lack of permissions.'})
     @ApiInternalServerErrorResponse({ description: 'Server error.'})
-    getAll():Promise<[User[],number]>{
+    getAll():Promise<StandardUserInterface[]>{
         return this.userService.getAll();
     }
 
+    //Jeden
+    @Get('user/1/:userId')
+    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+    @ApiOperation({ summary: 'Get certain user.' })
+    @ApiOkResponse({ description: 'User has been successfully fetched.'})
+    @ApiUnauthorizedResponse({ description: 'Lack of permissions.'})
+    @ApiInternalServerErrorResponse({ description: 'Server error.'})
+    getOne(
+        @Param('userId') userId:string,
+    ):Promise<StandardUserInterface>{
+        return this.userService.getOne(userId);
+    }
+
     //Aktywacja konta
-    @Get('activateAccount/:user_id')
+    @Get('user/activateAccount/:user_id')
     @ApiOperation({ summary: 'User account activation.' })
     @ApiOkResponse({ description: 'User account activated.'})
     @ApiNotFoundResponse({ description: 'User not found.'})

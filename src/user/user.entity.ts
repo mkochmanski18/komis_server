@@ -65,3 +65,6 @@ export class User extends BaseEntity{
     @OneToMany(()=>Car, (car)=>car.modifiedBy)
     modyfiedCars: Car[]
 
+    @OneToMany(()=>Reservation, (res)=>res.reservedBy)
+    reservations: Reservation[]
+}
