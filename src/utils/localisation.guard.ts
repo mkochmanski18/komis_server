@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { hashPwd } from './hash-pwd';
-import { Token } from 'src/user/token.entity';
+import { Token } from 'src/user/entities/token.entity';
 
 @Injectable()
 export class LocalisationGuard implements CanActivate {

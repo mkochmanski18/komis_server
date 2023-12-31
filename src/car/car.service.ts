@@ -20,13 +20,27 @@ export class CarService {
     
     async fetchOneCar(carId: string): Promise<Car> {
             const car = await Car.findOneBy({id:carId});
+            const car = await Car.findOne({where:{id:carId},relations:{equipment:true,photos:true}});
             if(!car) throw new HttpException('Car does not exist.', HttpStatus.NOT_FOUND);
             return car;
     }
     
     async fetchAll(): Promise<CarInterface[]> { 
             const cars = Car.find();
+            const cars = Car.find({relations:{equipment:true,photos:true}});
             return cars;
+    }
+
+    async fetchAllEquipments(): Promise<Equipment[]> {
+        const eq = await Equipment.find();
+        return eq;
+    }
+
+    addEq(name:string): Equipment {
+        const eq = new Equipment();
+        eq.name = name;
+        eq.save();
+        return eq;
     }
 
     async newCar(carBody: NewCarDto,req:any): Promise<string> {
@@ -108,4 +122,20 @@ export class CarService {
         }
         return "ok";
     }
+
+    async updateCarEquipment(carId:string, carEqBody: string[]): Promise<Equipment[]> {
+        const car = await Car.findOne({where:{id:carId},relations:{equipment:true}});
+        if(!car) throw new HttpException('Car does not exist.', HttpStatus.NOT_FOUND)
+        let newEquipment:Equipment[] = [];
+        carEqBody.forEach(async eq=>{
+            const searchEq = await Equipment.findOne({where:{name:eq}});
+            if(!searchEq) throw new HttpException('Bad request.', HttpStatus.BAD_REQUEST)
+            newEquipment.push(searchEq);
+        });
+        car.equipment = newEquipment;
+        car.save();
+        const newCar = await Car.findOne({where:{id:carId},relations:{equipment:true}});
+        return newCar.equipment;
+    }
+
 }

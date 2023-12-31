@@ -11,7 +11,7 @@ export class RegisterDto {
   @ApiProperty()
   lastname: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: Gender, enumName: 'Gender' })
   gender:Gender;
 
   @ApiProperty()

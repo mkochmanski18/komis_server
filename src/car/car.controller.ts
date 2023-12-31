@@ -57,6 +57,26 @@ export class CarController {
         return this.carService.fetchOneCar(carId);
     }
 
+    @Get('equipment')
+    @UseGuards(JwtAuthGuard,ActivationGuard)
+    @ApiOperation({ summary: 'Get all car types' })
+    @ApiOkResponse({ description: 'Object fetched.'})
+    @ApiInternalServerErrorResponse({ description: 'Server error.'})
+    fetchAllEquipments():Promise<Equipment[]>{
+        return this.carService.fetchAllEquipments();
+    }
+
+    @Post('equipment/:name')
+    @UseGuards(JwtAuthGuard,ActivationGuard)
+    @ApiOperation({ summary: 'Add new type' })
+    @ApiOkResponse({ description: 'Object added.'})
+    @ApiInternalServerErrorResponse({ description: 'Server error.'})
+    addEq(
+        @Param('name') name:string
+    ):Equipment{
+        return this.carService.addEq(name);
+    }
+
     @Post('car')
     @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
     @ApiOperation({ summary: 'Add new car to system.' })
@@ -112,5 +132,18 @@ export class CarController {
 
     
 
+    @Put('equipment/:carId')
+    @UseGuards(JwtAuthGuard,ActivationGuard)
+    @ApiOperation({ summary: 'ChangeCar equipment. Body is formed as array of equipment names.' })
+    @ApiCreatedResponse({ description: 'Object updated.'})
+    @ApiNotFoundResponse({ description: 'Car does not exist.'})
+    @ApiBadRequestResponse({ description: 'Bad Request.'})
+    @ApiInternalServerErrorResponse({ description: 'Server error.'})
+    updateCarEquipment(
+        @Param('carId') carId:string,
+        @Body() carEqBody: string[],
+    ):Promise<Equipment[]>{
+        return this.carService.updateCarEquipment(carId, carEqBody);
+    }
     
 }

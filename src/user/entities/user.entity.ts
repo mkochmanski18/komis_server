@@ -2,8 +2,8 @@ import { BaseEntity, Column, Entity,JoinColumn,ManyToOne,OneToMany,OneToOne,Prim
 import { Token } from "./token.entity";
 import { Role } from "src/enums/role.enum";
 import { Gender } from "src/enums/gender.enum";
-import { Car } from "src/car/car.entity";
-import { Reservation } from "src/car/reservation.entity";
+import { Car } from "src/car/entities/car.entity";
+import { Reservation } from "src/car/entities/reservation.entity";
 
 
 @Entity()

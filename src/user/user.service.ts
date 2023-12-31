@@ -1,15 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { hashPwd } from 'src/utils/hash-pwd';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { RegisterUserResponse, StandardUserInterface } from 'src/interfaces/user';
-import { Token } from './token.entity';
+import { Token } from './entities/token.entity';
 
 @Injectable()
 export class UserService {
     
     regFilter(user:User):RegisterUserResponse{
-        const {id, name, gender, email} = user;
+        const {id, name, email} = user;
         return {id,name,email};
     }
     standardUserFilter(user:User):StandardUserInterface{
@@ -63,13 +63,13 @@ export class UserService {
                 token.save();
                 console.log("Registered!");
 
-                const result = await this.mailTransport.sendMail({
-                  from:    '"SYSTEM" <admin@mkochmanski.smallhost.pl>',
-                  to:      user.email,
-                  subject: 'Account Activation',
-                  text:    'Dziękujemy za rejestrację! W celu aktywacji przejdź na adres: http://mkochmanski.smallhost.pl:37738/user/activateAccount/'+user.id+'.Wiadomość została wygenerowana automatycznie. Proszę nie udzielać na nią odpowiedzi.',
-                  html:    "<div style='text-align:center'><h4>Dziękujemy za rejestrację!</h4><p>W celu aktywacji kliknij w link poniżej:</p><a href='http://mkochmanski.smallhost.pl:37738/user/activateAccount/"+user.id+"'>Aktywuj konto</a><p>Wiadomość została wygenerowana automatycznie. Proszę nie udzielać na nią odpowiedzi</p></div>",
-                })
+                // const result = await this.mailTransport.sendMail({
+                //   from:    '"SYSTEM" <admin@mkochmanski.smallhost.pl>',
+                //   to:      user.email,
+                //   subject: 'Account Activation',
+                //   text:    'Dziękujemy za rejestrację! W celu aktywacji przejdź na adres: http://mkochmanski.smallhost.pl:37738/user/activateAccount/'+user.id+'.Wiadomość została wygenerowana automatycznie. Proszę nie udzielać na nią odpowiedzi.',
+                //   html:    "<div style='text-align:center'><h4>Dziękujemy za rejestrację!</h4><p>W celu aktywacji kliknij w link poniżej:</p><a href='http://mkochmanski.smallhost.pl:37738/user/activateAccount/"+user.id+"'>Aktywuj konto</a><p>Wiadomość została wygenerowana automatycznie. Proszę nie udzielać na nią odpowiedzi</p></div>",
+                // })
                 
                 return this.regFilter(user);
             }

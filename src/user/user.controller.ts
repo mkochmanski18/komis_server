@@ -13,7 +13,7 @@ import {
     ApiTags,
     ApiNotFoundResponse,
   } from '@nestjs/swagger';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { LocalisationGuard } from 'src/utils/localisation.guard';
 import { ActivationGuard } from 'src/utils/activation.guard';
 
