@@ -1,4 +1,4 @@
-import { User } from "src/user/user.entity";
+import { User } from "src/user/entities/user.entity";
 import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Car } from "./car.entity";
 
@@ -12,7 +12,7 @@ export class Reservation extends BaseEntity{
     reservedCar: Car
 
     @Column()
-    monthlyCost: number;
+    dailyCost: number;
 
     @Column()
     reservationBeginDate:Date;

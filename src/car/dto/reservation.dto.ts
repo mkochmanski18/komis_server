@@ -6,7 +6,7 @@ export class ReservationDto {
   carId:string;
 
   @ApiProperty()
-  monthlyCost:number;
+  dailyCost:number;
 
   @ApiProperty()
   reservationBeginDate:Date;

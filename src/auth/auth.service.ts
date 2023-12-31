@@ -1,12 +1,12 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { Response } from 'express';
 import {AuthLoginDto} from "./dto/auth-login.dto";
-import {User} from "../user/user.entity";
+import {User} from "../user/entities/user.entity";
 import {hashPwd} from "../utils/hash-pwd";
 import { v4 as uuid } from 'uuid';
 import { sign } from 'jsonwebtoken';
 import {JwtPayload} from "./jwt.strategy";
-import { Token } from 'src/user/token.entity';
+import { Token } from 'src/user/entities/token.entity';
 
 @Injectable()
 export class AuthService {

@@ -1,8 +1,11 @@
 import { Fuel } from "src/enums/fuel.enum";
 import { Transmission } from "src/enums/transmission.enum";
-import { User } from "src/user/user.entity";
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne,  OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { BaseEntity, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne,  OneToMany,  OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Reservation } from "./reservation.entity";
+import { Equipment } from "./equipment.entity";
+import { CarType } from "src/enums/carType.enum";
+import { Photo } from "src/photo/photo.entity";
 
 @Entity()
 export class Car extends BaseEntity{
@@ -45,6 +48,9 @@ export class Car extends BaseEntity{
     seats:number;
 
     @Column()
+    type:CarType;
+
+    @Column()
     rentTotalCost: number;
 
     @Column({
@@ -72,4 +78,11 @@ export class Car extends BaseEntity{
 
     @OneToOne(()=>Reservation,(res)=>res.reservedCar)
     reservation: Reservation;
+
+    @ManyToMany(()=>Equipment)
+    @JoinTable()
+    equipment: Equipment[];
+
+    @OneToMany(()=>Photo,(photo)=>photo.describes)
+    photos:Photo[];
 }

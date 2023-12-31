@@ -4,7 +4,7 @@ import {Response} from 'express';
 import {AuthLoginDto} from "./dto/auth-login.dto";
 import { JwtAuthGuard } from './jwt-auth.guard';
 import {UserObj} from "../decorators/user-obj.decorator";
-import {User} from "../user/user.entity";
+import {User} from "../user/entities/user.entity";
 import {
     ApiCreatedResponse,
     ApiInternalServerErrorResponse,

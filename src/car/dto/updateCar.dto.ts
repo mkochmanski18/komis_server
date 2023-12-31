@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CarType } from 'src/enums/carType.enum';
 import { Fuel } from 'src/enums/fuel.enum';
 import { Transmission } from 'src/enums/transmission.enum';
 
@@ -13,7 +14,7 @@ export class UpdateCarDto {
   @ApiProperty()
   model:string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: Fuel, enumName: 'Fuel' })
   fuelType:Fuel;
 
   @ApiProperty()
@@ -25,11 +26,14 @@ export class UpdateCarDto {
   @ApiProperty()
   kilometers:number;
 
-  @ApiProperty()
+  @ApiProperty({ enum: Transmission, enumName: 'Transmission' })
   transmission:Transmission;
   
   @ApiProperty()
   productionYear:number;
+
+  @ApiProperty({ enum: CarType, enumName: 'CarType' })
+  carType:CarType;
   
   @ApiProperty()
   seats:number;

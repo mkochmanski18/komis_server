@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Car } from 'src/car/car.entity';
-import { Reservation } from 'src/car/reservation.entity';
+import { Car } from 'src/car/entities/car.entity';
+import { Reservation } from 'src/car/entities/reservation.entity';
 import { CarInterface } from 'src/interfaces/car';
 import { StandardUserInterface } from 'src/interfaces/user';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/user/entities/user.entity';
 import { FindOptionsWhere } from 'typeorm';
 
 @Injectable()

@@ -1,13 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { NewCarDto } from './dto/newCar.dto';
-import { Car } from './car.entity';
+import { Car } from './entities/car.entity';
 import { UpdateCarDto } from './dto/updateCar.dto';
 import { CarInterface } from 'src/interfaces/car';
-import { Reservation } from './reservation.entity';
+import { Reservation } from './entities/reservation.entity';
 import { ReservationDto } from './dto/reservation.dto';
+import { Equipment } from './entities/equipment.entity';
 
 @Injectable()
 export class CarService {
+   
     async fetchRentalCars(): Promise<Car[]> {
         const cars = await Car.find({relations:{reservation:true}});
         let newArray:Car[] = [];
@@ -19,14 +21,12 @@ export class CarService {
     }
     
     async fetchOneCar(carId: string): Promise<Car> {
-            const car = await Car.findOneBy({id:carId});
             const car = await Car.findOne({where:{id:carId},relations:{equipment:true,photos:true}});
             if(!car) throw new HttpException('Car does not exist.', HttpStatus.NOT_FOUND);
             return car;
     }
     
     async fetchAll(): Promise<CarInterface[]> { 
-            const cars = Car.find();
             const cars = Car.find({relations:{equipment:true,photos:true}});
             return cars;
     }
@@ -47,7 +47,7 @@ export class CarService {
             const user = req.user;
             if(!user) throw new HttpException('Server error.', HttpStatus.INTERNAL_SERVER_ERROR)
 
-            const {make, model, fuelType, engine, power, kilometers, transmission, productionYear, seats,rentTotalCost} = carBody;
+            const {make, model, fuelType, engine, power, kilometers, transmission, productionYear, seats,carType, rentTotalCost} = carBody;
             const newCar = new Car();
             newCar.make = make;
             newCar.model = model,
@@ -58,6 +58,7 @@ export class CarService {
             newCar.transmission = transmission;
             newCar.productionYear = productionYear;
             newCar.seats = seats;
+            newCar.type = carType;
             newCar.rentTotalCost = rentTotalCost;
             newCar.creationDate = new Date();
             
@@ -75,7 +76,7 @@ export class CarService {
         newReservation.reservedBy = req.user;
         newReservation.reservationDate = new Date();
         newReservation.reservedCar = car;
-        newReservation.monthlyCost = resBody.monthlyCost;
+        newReservation.dailyCost = resBody.dailyCost;
         newReservation.reservationBeginDate = resBody.reservationBeginDate;
         newReservation.reservationEndDate = resBody.reservationEndDate;
         newReservation.save();

@@ -1,7 +1,7 @@
 import { Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Token } from 'src/user/token.entity';
+import { Token } from 'src/user/entities/token.entity';
 
 export interface JwtPayload {
     id: string;

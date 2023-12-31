@@ -7,16 +7,19 @@ import {
     ApiOperation,
     ApiTags,
     ApiNotFoundResponse,
+    ApiBadRequestResponse,
   } from '@nestjs/swagger';
 import { NewCarDto } from './dto/newCar.dto';
 import { CarService } from './car.service';
 import { UpdateCarDto } from './dto/updateCar.dto';
 import { CarInterface } from 'src/interfaces/car';
-import { Car } from './car.entity';
+import { Car } from './entities/car.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { LocalisationGuard } from 'src/utils/localisation.guard';
 import { ActivationGuard } from 'src/utils/activation.guard';
 import { ReservationDto } from './dto/reservation.dto';
+import { Equipment } from './entities/equipment.entity';
+
 
 @ApiTags('car')
 @Controller()
@@ -27,7 +30,7 @@ export class CarController {
     ){}
 
     @Get('car')
-    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+    @UseGuards(JwtAuthGuard,ActivationGuard)
      @ApiOkResponse({ description: 'Objects fetched.'})
      @ApiInternalServerErrorResponse({ description: 'Server error.'})
      fetchAll(
@@ -36,7 +39,7 @@ export class CarController {
      }
 
      @Get('car/rent')
-     @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+     @UseGuards(JwtAuthGuard,ActivationGuard)
      @ApiOperation({ summary: 'Get all cars posible to rent.' })
      @ApiOkResponse({ description: 'Objects fetched.'})
      @ApiInternalServerErrorResponse({ description: 'Server error.'})
@@ -46,7 +49,7 @@ export class CarController {
      }
 
      @Get('car/:carId')
-     @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+     @UseGuards(JwtAuthGuard,ActivationGuard)
      @ApiOperation({ summary: 'Get car with certain id.' })
     @ApiOkResponse({ description: 'Object fetched.'})
     @ApiNotFoundResponse({ description: 'Car does not exist.'})
@@ -78,7 +81,7 @@ export class CarController {
     }
 
     @Post('car')
-    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+    @UseGuards(JwtAuthGuard,ActivationGuard)
     @ApiOperation({ summary: 'Add new car to system.' })
     @ApiCreatedResponse({ description: 'Object added.'})
     @ApiNotFoundResponse({ description: 'User does not exist.'})
@@ -91,8 +94,7 @@ export class CarController {
     }
 
     @Post('reservation')
-    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
-    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+    @UseGuards(JwtAuthGuard,ActivationGuard)
     @ApiOperation({ summary: 'Add new car to system.' })
     @ApiCreatedResponse({ description: 'Object added.'})
     @ApiConflictResponse({ description: 'Car is already reserved.'})
@@ -106,7 +108,7 @@ export class CarController {
     }
 
     @Put('car')
-    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+    @UseGuards(JwtAuthGuard,ActivationGuard)
     @ApiOperation({ summary: 'Update using the same array, made of schemas of single update request.' })
     @ApiCreatedResponse({ description: 'Objects updated.'})
     @ApiNotFoundResponse({ description: 'Car does not exist.'})
@@ -118,7 +120,7 @@ export class CarController {
     }
 
     @Put('car/1')
-    @UseGuards(JwtAuthGuard,LocalisationGuard,ActivationGuard)
+    @UseGuards(JwtAuthGuard,ActivationGuard)
     @ApiOperation({ summary: 'Update .' })
     @ApiCreatedResponse({ description: 'Object updated.'})
     @ApiNotFoundResponse({ description: 'Car does not exist.'})
@@ -128,9 +130,6 @@ export class CarController {
     ):Promise<string>{
         return this.carService.updateCar(carBody);
     }
-
-
-    
 
     @Put('equipment/:carId')
     @UseGuards(JwtAuthGuard,ActivationGuard)
